@@ -57,6 +57,24 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define RX_AUX_Pin GPIO_PIN_13
+#define RX_AUX_GPIO_Port GPIOC
+#define RX_M0_Pin GPIO_PIN_0
+#define RX_M0_GPIO_Port GPIOC
+#define RX_M1_Pin GPIO_PIN_1
+#define RX_M1_GPIO_Port GPIOC
+#define LED1_Pin GPIO_PIN_2
+#define LED1_GPIO_Port GPIOC
+#define BEEPER_Pin GPIO_PIN_3
+#define BEEPER_GPIO_Port GPIOC
+#define GYRO_EXTI_Pin GPIO_PIN_4
+#define GYRO_EXTI_GPIO_Port GPIOC
+#define USB_DETECT_Pin GPIO_PIN_5
+#define USB_DETECT_GPIO_Port GPIOC
+#define BOOT1_Pin GPIO_PIN_2
+#define BOOT1_GPIO_Port GPIOB
+#define LED_STRIP_Pin GPIO_PIN_8
+#define LED_STRIP_GPIO_Port GPIOC
 
 /* USER CODE BEGIN Private defines */
 

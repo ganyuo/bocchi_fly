@@ -1,0 +1,19 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "defines": [
+                "USE_HAL_DRIVER", /* 加上这两个 */
+                "STM32F405xx"     /* 这个要根据MCU型号来写 */
+            ],
+            "compilerPath": "${env:HOME}/programs/gcc-arm-none-eabi-10.3/bin/arm-none-eabi-gcc",
+            "cStandard": "gnu11",
+            "cppStandard": "gnu++11",
+            "intelliSenseMode": "gcc-arm"
+        }
+    ],
+    "version": 4
+}

@@ -1,0 +1,19 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Cortex Debug",
+            "cwd": "${workspaceRoot}",
+            "preLaunchTask": "task_build",
+            "executable": "${workspaceRoot}/build/${workspaceFolderBasename}.elf",
+            "request": "launch",
+			"type": "cortex-debug",
+			"svdFile": "STM32F405.svd",
+            "servertype": "openocd",
+            "configFiles":[
+                "${workspaceRoot}/openocd.cfg"
+            ],
+            "armToolchainPath": "${env:HOME}/programs/gcc-arm-none-eabi-10.3/bin"
+        }
+    ]
+}
