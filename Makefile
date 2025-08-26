@@ -73,6 +73,10 @@ Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pcd.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pcd_ex.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_usb.c
 
+
+C_SOURCES += \
+Core/Src/drivers/mpu6500.c
+
 # ASM sources
 ASM_SOURCES =  \
 startup_stm32f405xx.s

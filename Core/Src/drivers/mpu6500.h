@@ -96,11 +96,13 @@
 #define MPU_RA_FIFO_R_W           0x74
 #define MPU_RA_WHO_AM_I           0x75
 
-void mpu6500_send_data(uint8_t *data, uint32_t size);
-uint32_t mpu6500_recvice_data(uint8_t *data);
-void mpu6500_init();
-void mpu6500_read_register();
-void mpu6500_write_register();
+#define MPU6500_WHO_AM_I_CONST    (0x70)
 
+extern struct mpu6500_sensor_data_t mpu6500_sensor_data;
+
+uint8_t mpu6500_read_register(uint8_t reg_addr);
+void mpu6500_write_register(uint8_t reg_addr, uint8_t value);
+uint8_t mpu6500_init();
+void mpu6500_upate_sensor_data();
 
 #endif /* __MPU_6500_H__ */
