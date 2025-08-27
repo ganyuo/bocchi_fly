@@ -7,25 +7,26 @@
 #define MPU6500_SPI &hspi2
 
 /**
- * @brief 向mpu6500发送数据
+ * @brief 向mpu6500写入数据
  * 
- * @param data 需要发生的数据起始地址
- * @param size 发送数据的长度
+ * @param tx_data 需要写入的数据
+ * @param size 写入数据的长度
  */
-void mpu6500_send_data(uint8_t *data, uint16_t size)
+void mpu6500_write_data(uint8_t *tx_data, uint16_t size)
 {
-    HAL_SPI_Transmit(MPU6500_SPI, data, size, HAL_MAX_DELAY);
+    HAL_SPI_Transmit(MPU6500_SPI, tx_data, size, HAL_MAX_DELAY);
 }
 
 /**
- * @brief 从mpu6500接收数据
+ * @brief 从mpu6500读取数据
  * 
- * @param data 存储接收到数据的起始地址
- * @param size 接收数据的长度
+ * @param tx_data 读取数据请求
+ * @param rx_data 存储读取到数据
+ * @param size 读取数据的长度
  */
-void mpu6500_recvice_data(uint8_t *data,  uint16_t size)
+void mpu6500_read_data(const uint8_t *tx_data, uint8_t *rx_data,  uint16_t size)
 {
-    HAL_SPI_Receive(MPU6500_SPI, data, size, HAL_MAX_DELAY);
+    HAL_SPI_TransmitReceive(MPU6500_SPI, tx_data, rx_data, size, HAL_MAX_DELAY);
 }
 
 /**
@@ -39,13 +40,6 @@ void mpu6500_recvice_data(uint8_t *data,  uint16_t size)
 
 /************************************end************************************/
 
-struct mpu6500_sensor_data_t
-{
-    uint16_t ax, ay, az;
-    uint16_t temp;
-    uint16_t gx, gy, gz;
-} mpu6500_sensor_data;
-
 /**
  * @brief 读取mpu6500一个寄存器的值
  * 
@@ -54,10 +48,10 @@ struct mpu6500_sensor_data_t
  */
 uint8_t mpu6500_read_register(uint8_t reg_addr)
 {
-    uint8_t value;
-    mpu6500_send_data(&reg_addr, 1);
-    mpu6500_recvice_data(&value, 1);
-    return value;
+    uint8_t tx_data[2] = {reg_addr | 0x80, 0x00}; // 读命令：寄存器地址最高位置1
+    uint8_t rx_data[2];
+    mpu6500_read_data(tx_data, rx_data, 2);
+    return rx_data[1];
 }
 
 /**
@@ -68,8 +62,8 @@ uint8_t mpu6500_read_register(uint8_t reg_addr)
  */
 void mpu6500_write_register(uint8_t reg_addr, uint8_t value)
 {
-    uint8_t temp_data[2] = {reg_addr, value};
-    mpu6500_send_data(temp_data, 2);
+    uint8_t tx_data[2] = {reg_addr & 0x7F, value}; // 写命令：寄存器地址最高位清0
+    mpu6500_write_data(tx_data, 2);
 }
 
 /**
@@ -89,7 +83,7 @@ uint8_t mpu6500_init()
     // 设置加速度传感器满量程范围
     mpu6500_write_register(MPU_RA_ACCEL_CONFIG, 0x18);
 
-    // 设置采样率为8kHz, 计算公式：8000 / (MPU_RA_SMPLRT_DIV + 1)
+    // 设置陀螺仪采样率为8kHz, 计算公式：8000 / (MPU_RA_SMPLRT_DIV + 1)
     mpu6500_write_register(MPU_RA_SMPLRT_DIV, 0);
 
     // // 设置CLKSEL，PLL X轴为参考
@@ -106,11 +100,16 @@ uint8_t mpu6500_init()
     {
         return 1;
     }
-
 }
 
-void mpu6500_upate_sensor_data()
+/**
+ * @brief 读取mpu6500的测量结果
+ * 
+ * @param sensor_data 测量的结果
+ */
+void mpu6500_read_sensor_data(mpu6500_sensor_data_t *sensor_data)
 {
-
+    uint8_t tx_data[sizeof(mpu6500_sensor_data_t)] = {MPU_RA_ACCEL_XOUT_H | 0x80, 0x00};
+    mpu6500_read_data(tx_data, (uint8_t*)sensor_data, sizeof(mpu6500_sensor_data_t));
 }
 

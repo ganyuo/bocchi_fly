@@ -98,11 +98,20 @@
 
 #define MPU6500_WHO_AM_I_CONST    (0x70)
 
-extern struct mpu6500_sensor_data_t mpu6500_sensor_data;
+struct mpu6500_sensor_data_s
+{
+    uint8_t reg_addr;
+    uint16_t ax, ay, az;
+    uint16_t temp;
+    uint16_t gx, gy, gz;
+} __attribute__ ((__packed__));
+
+/* mpu6500测量的传感器数据 */
+typedef struct mpu6500_sensor_data_s mpu6500_sensor_data_t;
 
 uint8_t mpu6500_read_register(uint8_t reg_addr);
 void mpu6500_write_register(uint8_t reg_addr, uint8_t value);
 uint8_t mpu6500_init();
-void mpu6500_upate_sensor_data();
+void mpu6500_read_sensor_data(mpu6500_sensor_data_t *sensor_data);
 
 #endif /* __MPU_6500_H__ */
