@@ -2,7 +2,9 @@
 
 /*****************以下接口与平台相关，移植时需要修改**********************/
 #include "stm32f4xx_hal.h"
+#include "stm32f405xx.h"
 #include "spi.h"
+#include "gpio.h"
 
 #define MPU6500_SPI &hspi2
 
@@ -20,13 +22,12 @@ void mpu6500_write_data(uint8_t *tx_data, uint16_t size)
 /**
  * @brief 从mpu6500读取数据
  * 
- * @param tx_data 读取数据请求
  * @param rx_data 存储读取到数据
  * @param size 读取数据的长度
  */
-void mpu6500_read_data(const uint8_t *tx_data, uint8_t *rx_data,  uint16_t size)
+void mpu6500_read_data(const uint8_t *rx_data,  uint16_t size)
 {
-    HAL_SPI_TransmitReceive(MPU6500_SPI, tx_data, rx_data, size, HAL_MAX_DELAY);
+    HAL_SPI_Receive(MPU6500_SPI, rx_data, size, HAL_MAX_DELAY);
 }
 
 /**
@@ -48,10 +49,11 @@ void mpu6500_read_data(const uint8_t *tx_data, uint8_t *rx_data,  uint16_t size)
  */
 uint8_t mpu6500_read_register(uint8_t reg_addr)
 {
-    uint8_t tx_data[2] = {reg_addr | 0x80, 0x00}; // 读命令：寄存器地址最高位置1
-    uint8_t rx_data[2];
-    mpu6500_read_data(tx_data, rx_data, 2);
-    return rx_data[1];
+    reg_addr |= 0x80; // 读命令：寄存器地址最高位置1
+    uint8_t rx_data;
+    mpu6500_write_data(&reg_addr, 1);
+    mpu6500_read_data(&rx_data, 1);
+    return rx_data;
 }
 
 /**
@@ -73,9 +75,22 @@ void mpu6500_write_register(uint8_t reg_addr, uint8_t value)
  */
 uint8_t mpu6500_init()
 {
+    delay_ms(100);
     // 复位
     mpu6500_write_register(MPU_RA_PWR_MGMT_1, 0x80);
     delay_ms(100);
+
+    // 唤醒mpu6500
+    mpu6500_write_register(MPU_RA_PWR_MGMT_1, 0x00);
+
+    // 验证是否有mpu6500
+    if (mpu6500_read_register(MPU_RA_WHO_AM_I) != MPU6500_WHO_AM_I_CONST)
+    {
+        return 1;
+    }
+
+    // 设置时钟源，使用PLL作为时钟源
+    mpu6500_write_register(MPU_RA_PWR_MGMT_1, 0x01);
 
     // 设置陀螺仪满量程范围
     mpu6500_write_register(MPU_RA_GYRO_CONFIG, 0x18);
@@ -86,20 +101,9 @@ uint8_t mpu6500_init()
     // 设置陀螺仪采样率为8kHz, 计算公式：8000 / (MPU_RA_SMPLRT_DIV + 1)
     mpu6500_write_register(MPU_RA_SMPLRT_DIV, 0);
 
-    // // 设置CLKSEL，PLL X轴为参考
-    // mpu6500_write_register(MPU_RA_PWR_MGMT_1, 0x01);
-
     // 设置加速度与陀螺仪都工作
     mpu6500_write_register(MPU_RA_PWR_MGMT_2, 0x00);
-
-    // 唤醒mpu6500
-    mpu6500_write_register(MPU_RA_PWR_MGMT_1, 0x00);
-
-    // 验证是否有mpu6500
-    if (mpu6500_read_register(MPU_RA_WHO_AM_I) != MPU6500_WHO_AM_I_CONST)
-    {
-        return 1;
-    }
+    delay_ms(50);
 }
 
 /**
@@ -110,6 +114,7 @@ uint8_t mpu6500_init()
 void mpu6500_read_sensor_data(mpu6500_sensor_data_t *sensor_data)
 {
     uint8_t tx_data[sizeof(mpu6500_sensor_data_t)] = {MPU_RA_ACCEL_XOUT_H | 0x80, 0x00};
-    mpu6500_read_data(tx_data, (uint8_t*)sensor_data, sizeof(mpu6500_sensor_data_t));
+    mpu6500_write_data(MPU_RA_SMPLRT_DIV, 1);
+    mpu6500_read_data((uint8_t*)sensor_data, sizeof(mpu6500_sensor_data_t));
 }
 

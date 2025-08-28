@@ -23,7 +23,9 @@
         "random": "c",
         "cmath": "c",
         "complex": "c",
-        "inv_mpu.h": "c"
+        "inv_mpu.h": "c",
+        "gpio.h": "c",
+        "stm32f405xx.h": "c"
     },
     "cortex-debug.variableUseNaturalFormat": false
 }

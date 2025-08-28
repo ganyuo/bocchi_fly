@@ -100,7 +100,6 @@
 
 struct mpu6500_sensor_data_s
 {
-    uint8_t reg_addr;
     uint16_t ax, ay, az;
     uint16_t temp;
     uint16_t gx, gy, gz;
