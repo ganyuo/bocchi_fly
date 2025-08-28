@@ -100,9 +100,9 @@
 
 struct mpu6500_sensor_data_s
 {
-    uint16_t ax, ay, az;
-    uint16_t temp;
-    uint16_t gx, gy, gz;
+    float ax, ay, az;
+    float temperature;
+    float gx, gy, gz;
 } __attribute__ ((__packed__));
 
 /* mpu6500测量的传感器数据 */

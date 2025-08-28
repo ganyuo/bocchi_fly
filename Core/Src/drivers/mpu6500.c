@@ -92,14 +92,22 @@ uint8_t mpu6500_init()
     // 设置时钟源，使用PLL作为时钟源
     mpu6500_write_register(MPU_RA_PWR_MGMT_1, 0x01);
 
-    // 设置陀螺仪满量程范围
-    mpu6500_write_register(MPU_RA_GYRO_CONFIG, 0x18);
+    // 设置陀螺仪量程范围
+    // 0 - 250dps
+    // 1 - 500dps
+    // 2 - 1000dps
+    // 3 - 2000dps
+    mpu6500_write_register(MPU_RA_GYRO_CONFIG, 3 << 3);
 
-    // 设置加速度传感器满量程范围
-    mpu6500_write_register(MPU_RA_ACCEL_CONFIG, 0x18);
+    // 设置加速度计量程范围
+    // 0 - 2g
+    // 1 - 4g
+    // 2 - 8g
+    // 3 - 16g
+    mpu6500_write_register(MPU_RA_ACCEL_CONFIG, 0 << 3);
 
-    // 设置陀螺仪采样率为8kHz, 计算公式：8000 / (MPU_RA_SMPLRT_DIV + 1)
-    mpu6500_write_register(MPU_RA_SMPLRT_DIV, 0);
+    // 设置陀螺仪采样率为1kHz, 计算公式：8000 / (MPU_RA_SMPLRT_DIV + 1)
+    mpu6500_write_register(MPU_RA_SMPLRT_DIV, 7);
 
     // 设置加速度与陀螺仪都工作
     mpu6500_write_register(MPU_RA_PWR_MGMT_2, 0x00);
@@ -113,8 +121,28 @@ uint8_t mpu6500_init()
  */
 void mpu6500_read_sensor_data(mpu6500_sensor_data_t *sensor_data)
 {
-    uint8_t tx_data[sizeof(mpu6500_sensor_data_t)] = {MPU_RA_ACCEL_XOUT_H | 0x80, 0x00};
-    mpu6500_write_data(MPU_RA_SMPLRT_DIV, 1);
-    mpu6500_read_data((uint8_t*)sensor_data, sizeof(mpu6500_sensor_data_t));
-}
+    uint8_t reg_addr = MPU_RA_ACCEL_XOUT_H | 0x80;
+    uint8_t rx_data[14];
+    mpu6500_write_data(reg_addr, 1);
+    mpu6500_read_data(rx_data, sizeof(rx_data));
 
+    int16_t ax, ay, az;
+    int16_t temp;
+    int16_t gx, gy, gz;
+
+    ax = ((int16_t)rx_data[0] << 8) | rx_data[1];
+    ay = ((int16_t)rx_data[2] << 8) | rx_data[3];
+    az = ((int16_t)rx_data[4] << 8) | rx_data[5];
+    temp = ((int16_t)rx_data[6] << 8) | rx_data[7];   
+    gx = ((int16_t)rx_data[8] << 8) | rx_data[9];
+    gy = ((int16_t)rx_data[10] << 8) | rx_data[11];
+    gz = ((int16_t)rx_data[12] << 8) | rx_data[13];
+
+    sensor_data->ax = ax *6.1035e-5f;
+    sensor_data->ay = ay *6.1035e-5f;
+    sensor_data->az = az *6.1035e-5f;
+    sensor_data->temperature = temp / 333.87f + 21.0f;
+    sensor_data->gx = gx *6.1035e-2f;
+    sensor_data->gy = gy *6.1035e-2f;
+    sensor_data->gz = gz *6.1035e-2f;
+}

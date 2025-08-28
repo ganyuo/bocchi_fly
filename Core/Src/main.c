@@ -28,7 +28,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "drivers/mpu6500.h"
+#include "test/mpu6500_test.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -110,8 +110,8 @@ int main(void)
     MX_USB_OTG_FS_PCD_Init();
     /* USER CODE BEGIN 2 */
 
-    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);
-    mpu6500_init();
+    mpu6500_sensor_data_test();
+    // Euler_angles_test();
     /* USER CODE END 2 */
 
     /* Infinite loop */
