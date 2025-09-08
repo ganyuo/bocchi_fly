@@ -2,6 +2,8 @@
 #ifndef __EULER_ANGLES_H__
 #define __EULER_ANGLES_H__
 
+#include "drivers/mpu6500.h"
+
 struct Euler_angles_s
 {
     float yaw, pitch, roll;

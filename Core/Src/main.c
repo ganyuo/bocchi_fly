@@ -29,6 +29,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "test/mpu6500_test.h"
+#include "drivers/mpu6500.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -110,16 +111,14 @@ int main(void)
     MX_USB_OTG_FS_PCD_Init();
     /* USER CODE BEGIN 2 */
 
-    mpu6500_sensor_data_test();
-    // Euler_angles_test();
+    mpu6500_init();
     /* USER CODE END 2 */
 
     /* Infinite loop */
     /* USER CODE BEGIN WHILE */
     while (1)
     {
-        HAL_UART_Transmit(&huart6, "test", 5, HAL_MAX_DELAY);
-        HAL_Delay(1000);
+        mpu6500_sensor_data_proc();
         /* USER CODE END WHILE */
 
         /* USER CODE BEGIN 3 */

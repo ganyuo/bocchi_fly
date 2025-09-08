@@ -25,7 +25,9 @@
         "complex": "c",
         "inv_mpu.h": "c",
         "gpio.h": "c",
-        "stm32f405xx.h": "c"
+        "stm32f405xx.h": "c",
+        "mpu6500.h": "c",
+        "euler_angles.h": "c"
     },
     "cortex-debug.variableUseNaturalFormat": false
 }

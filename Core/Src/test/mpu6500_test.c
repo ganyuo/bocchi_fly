@@ -1,41 +1,34 @@
 
 #include <stdio.h>
+#include <string.h>
 #include "mpu6500_test.h"
 #include "stm32f4xx.h"
 #include "usart.h"
 #include "process/process.h"
 #include "drivers/mpu6500.h"
-#include "euler_angles.h"
+#include "drivers/euler_angles.h"
 
-void mpu6500_sensor_data_test()
+void mpu6500_sensor_data_proc()
 {
-    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);
-    mpu6500_init();
+    PERIODIC(1000)
+    mpu6500_sensor_data_t mpu6500_sensor_data;
+    mpu6500_read_sensor_data(&mpu6500_sensor_data);
 
-    while (1)
-    {
-        PERIODIC(50)
+    char uart_buff[256];
+    sprintf(uart_buff, "%f, %f, %f, %f, %f, %f, %f\n", 
+        mpu6500_sensor_data.ax,
+        mpu6500_sensor_data.ay,
+        mpu6500_sensor_data.az,
+        mpu6500_sensor_data.temperature,
+        mpu6500_sensor_data.gx,
+        mpu6500_sensor_data.gy,
+        mpu6500_sensor_data.gz);
 
-        mpu6500_sensor_data_t mpu6500_sensor_data;
-        mpu6500_read_sensor_data(&mpu6500_sensor_data);
-
-        char uart_buff[256];
-        sprintf(uart_buff, "%f, %f, %f, %f, %f, %f, %f\n", 
-            mpu6500_sensor_data.ax,
-            mpu6500_sensor_data.ay,
-            mpu6500_sensor_data.az,
-            mpu6500_sensor_data.temperature,
-            mpu6500_sensor_data.gx,
-            mpu6500_sensor_data.gy,
-            mpu6500_sensor_data.gz);
-
-        HAL_UART_Transmit(&huart6, uart_buff, 256, 45);
-    }
+    HAL_UART_Transmit(&huart6, (uint8_t *)uart_buff, strlen(uart_buff), 45);
 }
 
 void Euler_angles_test()
 {
-    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);
     mpu6500_init();
 
     Euler_angles_t euler_angles = {0, 0, 0};
@@ -54,7 +47,7 @@ void Euler_angles_test()
             euler_angles.pitch,
             euler_angles.roll);
 
-        HAL_UART_Transmit(&huart6, uart_buff, 256, 45);
+        HAL_UART_Transmit(&huart6, (uint8_t *)uart_buff, 256, 45);
     }
 }
 
