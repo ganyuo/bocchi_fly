@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <string.h>
 #include "mpu6500_test.h"
@@ -16,7 +15,7 @@ void mpu6500_sensor_data_test()
 
     while(1)
     {
-        PERIODIC(1000)
+        // PERIODIC(1000)
         mpu6500_read_sensor_data(&mpu6500_sensor_data);
 
         char uart_buff[256];
@@ -29,7 +28,8 @@ void mpu6500_sensor_data_test()
             mpu6500_sensor_data.gy,
             mpu6500_sensor_data.gz);
 
-        HAL_UART_Transmit(&huart6, (uint8_t *)uart_buff, strlen(uart_buff), 45);
+        HAL_UART_Transmit(&huart6, (uint8_t *)uart_buff, strlen(uart_buff), HAL_MAX_DELAY);
+        HAL_Delay(1000);
     }
 }
 
@@ -42,8 +42,7 @@ void Euler_angles_test()
 
     while(1)
     {
-        PERIODIC(50)
-
+        // PERIODIC(50)
         mpu6500_read_sensor_data(&mpu6500_sensor_data);
         // Euler_angles_update_by_gyro(&euler_angles, &mpu6500_sensor_data, 0.05);
         // Euler_angles_update_by_acceler(&euler_angles, &mpu6500_sensor_data);
@@ -55,7 +54,8 @@ void Euler_angles_test()
             euler_angles.pitch,
             euler_angles.roll);
 
-        HAL_UART_Transmit(&huart6, (uint8_t *)uart_buff, 256, 45);
+        HAL_UART_Transmit(&huart6, (uint8_t *)uart_buff, strlen(uart_buff), HAL_MAX_DELAY);
+        HAL_Delay(45);
     }
 }
 

@@ -111,7 +111,7 @@ int main(void)
     MX_USB_OTG_FS_PCD_Init();
     /* USER CODE BEGIN 2 */
 
-    mpu6500_sensor_data_test();
+    // mpu6500_sensor_data_test();
     Euler_angles_test();
     /* USER CODE END 2 */
 

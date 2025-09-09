@@ -119,10 +119,6 @@ void mpu6500_read_sensor_data(mpu6500_sensor_data_t *sensor_data)
     uint8_t rx_data[14];
     mpu6500_read_register(MPU_RA_ACCEL_XOUT_H, rx_data, 14);
 
-    int16_t ax, ay, az;
-    int16_t temp;
-    int16_t gx, gy, gz;
-
     int16_t ax = ((int16_t)rx_data[0] << 8) | rx_data[1];
     int16_t ay = ((int16_t)rx_data[2] << 8) | rx_data[3];
     int16_t az = ((int16_t)rx_data[4] << 8) | rx_data[5];
