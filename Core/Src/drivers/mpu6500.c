@@ -116,26 +116,26 @@ uint8_t mpu6500_init()
  */
 void mpu6500_read_sensor_data(mpu6500_sensor_data_t *sensor_data)
 {
-    uint8_t rx_data[15];
+    uint8_t rx_data[14];
     mpu6500_read_register(MPU_RA_ACCEL_XOUT_H, rx_data, 14);
 
     int16_t ax, ay, az;
     int16_t temp;
     int16_t gx, gy, gz;
 
-    ax = ((int16_t)rx_data[0] << 8) | rx_data[1];
-    ay = ((int16_t)rx_data[2] << 8) | rx_data[3];
-    az = ((int16_t)rx_data[4] << 8) | rx_data[5];
-    temp = ((int16_t)rx_data[6] << 8) | rx_data[7];   
-    gx = ((int16_t)rx_data[8] << 8) | rx_data[9];
-    gy = ((int16_t)rx_data[10] << 8) | rx_data[11];
-    gz = ((int16_t)rx_data[12] << 8) | rx_data[13];
+    int16_t ax = ((int16_t)rx_data[0] << 8) | rx_data[1];
+    int16_t ay = ((int16_t)rx_data[2] << 8) | rx_data[3];
+    int16_t az = ((int16_t)rx_data[4] << 8) | rx_data[5];
+    int16_t temperature = ((int16_t)rx_data[6] << 8) | rx_data[7];
+    int16_t gx = ((int16_t)rx_data[8] << 8) | rx_data[9];
+    int16_t gy = ((int16_t)rx_data[10] << 8) | rx_data[11];
+    int16_t gz = ((int16_t)rx_data[12] << 8) | rx_data[13];
 
-    sensor_data->ax = ax *6.1035e-5f;
-    sensor_data->ay = ay *6.1035e-5f;
-    sensor_data->az = az *6.1035e-5f;
-    sensor_data->temperature = temp / 333.87f + 21.0f;
-    sensor_data->gx = gx *6.1035e-2f;
-    sensor_data->gy = gy *6.1035e-2f;
-    sensor_data->gz = gz *6.1035e-2f;
+    sensor_data->ax = (float)ax * 6.1035e-5f;
+    sensor_data->ay = (float)ay * 6.1035e-5f;
+    sensor_data->az = (float)az * 6.1035e-5f;
+    sensor_data->gx = (float)gx * 6.1035e-2f;
+    sensor_data->gy = (float)gy * 6.1035e-2f;
+    sensor_data->gz = (float)gz * 6.1035e-2f;
+    sensor_data->temperature = (float)temperature / 333.87f + 21.0f;
 }

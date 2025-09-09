@@ -13,5 +13,7 @@ struct Euler_angles_s
 typedef struct Euler_angles_s Euler_angles_t;
 
 void Euler_angles_update_by_gyro(Euler_angles_t *euler_angles, mpu6500_sensor_data_t *sensor_data, float intveral);
+void Euler_angles_update_by_acceler(Euler_angles_t *euler_angles, mpu6500_sensor_data_t *sensor_data);
+void complementary_filter(Euler_angles_t *euler_angles, mpu6500_sensor_data_t *sensor_data, float interval);
 
 #endif /* __EULER_ANGLES_H__ */
